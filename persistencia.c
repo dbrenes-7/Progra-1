@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 typedef struct registroSala registroSala;
 
@@ -13,13 +12,18 @@ struct registroSala{
     int calificacion;
 };
 
-int main(){
+void agregarSala(){
     char capacidad[10];
-    registroSala registroSala[2];
+    int numSalas;
+
+    printf("Ingrese la cantidad de salas que agregara: ");
+    scanf("%d",&numSalas);
+
+    registroSala registroSala[numSalas];
     FILE *Archivo;
     Archivo = fopen("Registro","a");
 
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < numSalas; ++i) {
         printf("\nIngrese el ID de la sala %i: ",i+1);
         scanf("%s",&registroSala[i].id);
         printf("\nIngrese la ubicacion de la sala %i: ",i+1);
@@ -36,5 +40,9 @@ int main(){
         fprintf(Archivo,"\nID: %s\nUbicacion: %s\nCapacidad: %i\nRecursos: %s\nEstado: %s\nCalificacion: %i",registroSala[i].id,registroSala[i].ubicacion,registroSala[i].capacidad,registroSala[i].recursos,registroSala[i].estado,registroSala[i].calificacion);
     }
     fclose(Archivo);
+}
+
+int main(){
+    agregarSala();
     return 0;
 }
