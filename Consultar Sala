@@ -1,0 +1,18 @@
+
+//Esto imprime todas las salas en el txt
+
+void consultarSala(){
+    FILE *fp = fopen("Registro.txt", "r+");
+    char buf[1024];
+
+    if (!fp) {
+        printf("Can't open file\n");
+        return;
+    }
+
+    while (fgets(buf, 1024, fp)) {
+        printf("%s\n", buf);
+    }
+
+    fclose(fp);
+}
