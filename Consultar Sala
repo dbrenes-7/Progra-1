@@ -1,18 +1,17 @@
+void consultarSalas(char sala[20]){
+    char linea[1024];
+    FILE *fich;
+    fich = fopen("Registro.txt", "r");
+    while(fgets(linea, 1024, (FILE*) fich)) {//esto agarra linea por linea toodo el documento
+        if(strcmp(sala,linea)==0){//esto agarra la sala ingresada en la funcion y dice si la encuentra en el documento
+            printf("LO LOGRASTE\n");
+            printf("%s",linea);
+            return;
+        }
+        else{
+            printf("TE MAMASTE\n");
+        }
 
-//Esto imprime todas las salas en el txt
-
-void consultarSala(){
-    FILE *fp = fopen("Registro.txt", "r+");
-    char buf[1024];
-
-    if (!fp) {
-        printf("Can't open file\n");
-        return;
     }
-
-    while (fgets(buf, 1024, fp)) {
-        printf("%s\n", buf);
-    }
-
-    fclose(fp);
+    fclose(fich);
 }
