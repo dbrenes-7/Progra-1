@@ -229,11 +229,11 @@ void crearReserva()
 
     prioridad = rand() % 4;
 
-    if(atenderReserva(id, ubicacion, fecha, inicio, final)==0){
+    if(atenderReserva(strcat(id,"\n"), strcat(ubicacion,"\n"), strcat(fecha,"\n"), inicio, final)==0){
         fprintf(Archivo,"%s\n",estudiante);
-        fprintf(Archivo,"%s\n",id);
-        fprintf(Archivo,"%s\n",ubicacion);
-        fprintf(Archivo,"%s\n",fecha);
+        fprintf(Archivo,"%s",id);
+        fprintf(Archivo,"%s",ubicacion);
+        fprintf(Archivo,"%s",fecha);
         fprintf(Archivo,"%d\n",inicio);
         fprintf(Archivo,"%d\n",final);
         fprintf(Archivo,"%d\n",prioridad);
@@ -284,15 +284,15 @@ int atenderReserva(char id[TAMANO], char ubicacion[TAMANO], char fechas[TAMANO],
     while(fgets(linea, 1024, (FILE*) fich)){
         fgets(linea, 1024, (FILE*) fich);//id primera
         strcpy(reserva.id,linea);
-        printf("%s",reserva.id);
-        printf("%s",id);
+        printf("%s\n",reserva.id);
+        printf("%s\n",id);
         fgets(linea, 1024, (FILE*) fich);//ubicacion
         strcpy(reserva.ubicacion,linea);
-        printf("%s",reserva.ubicacion);
-        printf("%s",ubicacion);
+        printf("%s\n",reserva.ubicacion);
+        printf("%s\n",ubicacion);
         fgets(linea, 1024, (FILE*) fich);//fecha
         strcpy(reserva.fecha,linea);
-        printf("%s",reserva.fecha);
+        printf("%s\n",reserva.fecha);
         printf("%s\n",fechas);
         fgets(linea, 1024, (FILE*) fich);//hora de inicio
         cont = atoi(linea);//guarda
@@ -303,7 +303,9 @@ int atenderReserva(char id[TAMANO], char ubicacion[TAMANO], char fechas[TAMANO],
         printf("%d\n",aux);
         printf("%d\n",final);
         if(strcmp(reserva.id,id)==0 && strcmp(reserva.ubicacion,ubicacion)==0){
+            printf("ENTRO AL PRIMER IF");
             if(strcmp(reserva.fecha,fechas)==0){
+                printf("ENTRO A SEGUNDO IF");
                 if(cont==inicio){
                     printf("ERROR, CHOQUE DE HORARIO");
                     flag = 1;
@@ -315,8 +317,6 @@ int atenderReserva(char id[TAMANO], char ubicacion[TAMANO], char fechas[TAMANO],
                     flag = 1;
                 }
             }
-        }else{
-            flag = 0;
         }
     }
 
