@@ -40,6 +40,7 @@ struct Reserva{
     char estudiante[TAMANO];
     char id[TAMANO];
     char fecha[TAMANO];
+    char ubicacion[TAMANO];
     int inicio;
     int fin;
     int prioridad;
@@ -60,6 +61,8 @@ void mostrarSalas();
 void calificarSala(char id[30]);
 void consultarSala(char sala[TAMANO]);
 void crearReserva();
+void consultarReserva(char estudiante[50]);
+int atenderReserva(char id[TAMANO],char ubicacio[TAMANO],char fechas[TAMANO], int incio,int final);
 
 
 void agregarEstudiante()
@@ -140,12 +143,12 @@ void agregarSala()
     printf("\nIndique la capacidad de la sala: ");
     scanf("%d",&sala.capacidad);
     fprintf(Archivo,"%d\n",sala.capacidad);
-    calificarSala(strcat(sala.id,"\n"));
+    calificarSala(sala.id);
 }
 
 void mostrarSalas(){
     FILE *fich;
-    fich = fopen("Registro.txt", "r");
+    fich = fopen("Registro.dat", "r");
     char registro[1024];
     while(fgets(registro, 1024, (FILE*) fich)) {//muestra todas las salas registradas
         printf(registro);
@@ -158,19 +161,19 @@ void calificarSala(char id[30]){
     printf("Indique la calificacion de la sala: ");
     scanf("%d",&sala.calificacion);
 
-    fprintf(Archivo,"\n%s",id);
-    fprintf(Archivo,"%d",sala.calificacion);
+    fprintf(Archivo,"%s\n",id);
+    fprintf(Archivo,"%d\n",sala.calificacion);
 
 }
 
 void consultarSala(char sala[TAMANO]){
     char registro[1024],reserva[1024],calif[1024];
     FILE *fich;
-    fich = fopen("Registro.txt", "r");
+    fich = fopen("Registro.dat", "r");
     FILE *arch;
     FILE *Archivo;
-    Archivo = fopen("Calificaciones.txt","r");
-    arch = fopen("Reserva.txt","r");
+    Archivo = fopen("Calificaciones.dat","r");
+    arch = fopen("Reserva.dat","r");
     while(fgets(registro, 1024, (FILE*) fich)) {//esto agarra linea por linea toodo el documento
         if(strcmp(registro,sala)==0){
             printf("%s", registro);//ID
@@ -205,44 +208,111 @@ void crearReserva()
     Archivo = fopen("Reserva.dat","ab");
     printf("\nIngrese el carnet del estudiante: ");
     scanf("%s",&reserva.estudiante);
-    fprintf(Archivo,"%s\n",reserva.estudiante);
+
     mostrarSalas();
     printf("Ingrese el ID de la sala: ");
     scanf("%s",&reserva.id);
-    fprintf(Archivo,"%s\n",reserva.id);
+
+    printf("\n[1]Biblioteca Jose Figueres Ferrer\n[2]Learning Commons\nIndique la ubicacion de la sala: ");
+    scanf("%s",&reserva.ubicacion);
+
     printf("\nIngrese la fecha de la reserva: ");
     scanf("%s",&reserva.fecha);
-    fprintf(Archivo,"%s\n",reserva.fecha);
+
     printf("\nIngrese la hora en formato de 24 horas, sin AM O PM\nIngrese la hora de incio de la reserva de la sala: ");
     scanf("%d",&reserva.inicio);
-    fprintf(Archivo,"%d\n",reserva.inicio);
+
     printf("\nIngrese la hora en formato de 24 horas, sin AM O PM\nIngrese la hora del final de la reserva de la sala: ");
     scanf("%d",&reserva.fin);
-    fprintf(Archivo,"%d\n",reserva.fin);
+
     reserva.prioridad = rand() % 4;
-    fprintf(Archivo,"%d\n",reserva.prioridad);
+
+
+    if (atenderReserva(strcat(reserva.id,"\n"),strcat(reserva.ubicacion,"\n"),strcat(reserva.fecha,"\n"),reserva.inicio,reserva.fin)==0){
+        fprintf(Archivo,"%s\n",reserva.estudiante);
+        fprintf(Archivo,"%s",reserva.id);
+        fprintf(Archivo,"%s",reserva.ubicacion);
+        fprintf(Archivo,"%s",reserva.fecha);
+        fprintf(Archivo,"%d\n",reserva.inicio);
+        fprintf(Archivo,"%d\n",reserva.fin);
+        fprintf(Archivo,"%d\n",reserva.prioridad);
+    }
+    else{
+        printf("\nVUELVA A INTENTARLO\n");
+        crearReserva();
+    }
 
 
     fclose(Archivo);
 
 }
 
-void consultarReserva(char estudiante[50])
+void consultarReserva(char carnet[50])
 {
     char linea[1024];
     FILE *fich;
     fich = fopen("Reserva.dat", "r");
     while(fgets(linea, 1024, (FILE*) fich)) {//esto agarra linea por linea toodo el documento
-        if(strcmp(estudiante,linea)==0){//esto agarra la sala ingresada en la funcion y dice si la encuentra en el documento
-            printf(linea);//Estudiante
-            printf(fgets(linea, 1024, (FILE*) fich));//ID  de la sala
-            printf(fgets(linea, 1024, (FILE*) fich));//Hora de inicio de la reserva
-            printf(fgets(linea, 1024, (FILE*) fich));//Hora del final de la reserva
-            printf(fgets(linea, 1024, (FILE*) fich));//Fecha de la reserva
-
+        strcpy(reserva.estudiante,linea);
+        fgets(linea, 1024, (FILE*) fich);//ID
+        strcpy(reserva.id,linea);
+        fgets(linea, 1024, (FILE*) fich);//UBICACION
+        strcpy(reserva.ubicacion,linea);
+        fgets(linea, 1024, (FILE*) fich);//FECHA
+        strcpy(reserva.fecha,linea);
+        fgets(linea, 1024, (FILE*) fich);//INICIO
+        reserva.inicio = atoi(linea);
+        fgets(linea, 1024, (FILE*) fich);//FIN
+        reserva.fin = atoi(linea);
+        fgets(linea, 1024, (FILE*) fich);//PRIORIDAD
+        reserva.prioridad = atoi(linea);
+        if(strcmp(carnet,reserva.estudiante)==0){//esto agarra la sala ingresada en la funcion y dice si la encuentra en el documento
+            //printf("%s",reserva.estudiante);//Estudiante
+            printf("%s",reserva.id);//ID  de la sala
+            printf("%s",reserva.ubicacion);//Ubicacion de la sala
+            printf("%s",reserva.fecha);//Fecha de la reserva
+            printf("%d\t",reserva.inicio);//Hora de inicio de la reserva
+            printf("%d\n",reserva.fin);//Hora del final de la reserva
         }
     }
     fclose(fich);
+}
+
+int atenderReserva(char id[TAMANO],char ubicacion[TAMANO],char fechas[TAMANO], int inicio,int final)
+{
+    char linea[1024];
+    int cont , aux, fin1;
+    FILE *fich;
+    fich = fopen("Reserva.dat", "r");
+    while(fgets(linea, 1024, (FILE*) fich)){
+        fgets(linea, 1024, (FILE*) fich);//id
+        strcpy(reserva.id,linea);
+        fgets(linea, 1024, (FILE*) fich);//ubicacion
+        strcpy(reserva.ubicacion,linea);
+        fgets(linea, 1024, (FILE*) fich);//fecha
+        strcpy(reserva.fecha,linea);
+        fgets(linea, 1024, (FILE*) fich);//hora de inicio
+        cont = atoi(linea);//guarda
+        fgets(linea, 1024, (FILE*) fich);//hora final
+        aux = atoi(linea);
+        fgets(linea, 1024, (FILE*) fich);//prioridad
+        if(strcmp(reserva.id,id)==0 && strcmp(reserva.ubicacion,ubicacion)==0){
+            if(strcmp(reserva.fecha,fechas)==0){
+                if(cont==inicio){
+                    printf("ERROR, CHOQUE DE HORARIO");
+                    return 1;
+                } else if (inicio>=cont && inicio<=aux){
+                    printf("ERROR, CHOQUE DE HORARIO");
+                    return 1;
+                } else if (final>=cont && final<=aux){
+                    printf("ERROR, CHOQUE DE HORARIO");
+                    return 1;
+                }
+            }
+        }
+    }
+
+    return 0;
 }
 
 int main()
@@ -250,9 +320,10 @@ int main()
     //agregarEstudiante();
     //agregarSala();
     //consultarSala("SAL001\n");
-    //crearReserva();
+    crearReserva();
     //calificarSala("SAL001\n");
-    //consultarReserva("Daniel Brenes\n");
+    //consultarReserva("2019061571\n");
     return 0;
 }
+
 
