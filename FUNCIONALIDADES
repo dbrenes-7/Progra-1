@@ -206,40 +206,37 @@ void crearReserva()
 {
     FILE *Archivo;
     Archivo = fopen("Reserva.dat","ab");
+    char estudiante[TAMANO],id[TAMANO],fecha[TAMANO], ubicacion[TAMANO];
+    int inicio, final, prioridad;
     printf("\nIngrese el carnet del estudiante: ");
-    scanf("%s",&reserva.estudiante);
+    scanf("%s",&estudiante);
 
     mostrarSalas();
     printf("Ingrese el ID de la sala: ");
-    scanf("%s",&reserva.id);
+    scanf("%s",&id);
 
     printf("\n[1]Biblioteca Jose Figueres Ferrer\n[2]Learning Commons\nIndique la ubicacion de la sala: ");
-    scanf("%s",&reserva.ubicacion);
+    scanf("%s",&ubicacion);
 
     printf("\nIngrese la fecha de la reserva: ");
-    scanf("%s",&reserva.fecha);
+    scanf("%s",&fecha);
 
     printf("\nIngrese la hora en formato de 24 horas, sin AM O PM\nIngrese la hora de incio de la reserva de la sala: ");
-    scanf("%d",&reserva.inicio);
+    scanf("%d",&inicio);
 
     printf("\nIngrese la hora en formato de 24 horas, sin AM O PM\nIngrese la hora del final de la reserva de la sala: ");
-    scanf("%d",&reserva.fin);
+    scanf("%d",&final);
 
-    reserva.prioridad = rand() % 4;
+    prioridad = rand() % 4;
 
-
-    if (atenderReserva(strcat(reserva.id,"\n"),strcat(reserva.ubicacion,"\n"),strcat(reserva.fecha,"\n"),reserva.inicio,reserva.fin)==0){
-        fprintf(Archivo,"%s\n",reserva.estudiante);
-        fprintf(Archivo,"%s",reserva.id);
-        fprintf(Archivo,"%s",reserva.ubicacion);
-        fprintf(Archivo,"%s",reserva.fecha);
-        fprintf(Archivo,"%d\n",reserva.inicio);
-        fprintf(Archivo,"%d\n",reserva.fin);
-        fprintf(Archivo,"%d\n",reserva.prioridad);
-    }
-    else{
-        printf("\nVUELVA A INTENTARLO\n");
-        crearReserva();
+    if(atenderReserva(id, ubicacion, fecha, inicio, final)==0){
+        fprintf(Archivo,"%s\n",estudiante);
+        fprintf(Archivo,"%s\n",id);
+        fprintf(Archivo,"%s\n",ubicacion);
+        fprintf(Archivo,"%s\n",fecha);
+        fprintf(Archivo,"%d\n",inicio);
+        fprintf(Archivo,"%d\n",final);
+        fprintf(Archivo,"%d\n",prioridad);
     }
 
 
@@ -278,41 +275,56 @@ void consultarReserva(char carnet[50])
     fclose(fich);
 }
 
-int atenderReserva(char id[TAMANO],char ubicacion[TAMANO],char fechas[TAMANO], int inicio,int final)
+int atenderReserva(char id[TAMANO], char ubicacion[TAMANO], char fechas[TAMANO], int inicio, int final)
 {
     char linea[1024];
-    int cont , aux, fin1;
+    int cont , aux, flag;
     FILE *fich;
     fich = fopen("Reserva.dat", "r");
     while(fgets(linea, 1024, (FILE*) fich)){
-        fgets(linea, 1024, (FILE*) fich);//id
+        fgets(linea, 1024, (FILE*) fich);//id primera
         strcpy(reserva.id,linea);
+        printf("%s",reserva.id);
+        printf("%s",id);
         fgets(linea, 1024, (FILE*) fich);//ubicacion
         strcpy(reserva.ubicacion,linea);
+        printf("%s",reserva.ubicacion);
+        printf("%s",ubicacion);
         fgets(linea, 1024, (FILE*) fich);//fecha
         strcpy(reserva.fecha,linea);
+        printf("%s",reserva.fecha);
+        printf("%s\n",fechas);
         fgets(linea, 1024, (FILE*) fich);//hora de inicio
         cont = atoi(linea);//guarda
+        printf("%d\n",cont);
+        printf("%d\n",inicio);
         fgets(linea, 1024, (FILE*) fich);//hora final
         aux = atoi(linea);
-        fgets(linea, 1024, (FILE*) fich);//prioridad
+        printf("%d\n",aux);
+        printf("%d\n",final);
         if(strcmp(reserva.id,id)==0 && strcmp(reserva.ubicacion,ubicacion)==0){
             if(strcmp(reserva.fecha,fechas)==0){
                 if(cont==inicio){
                     printf("ERROR, CHOQUE DE HORARIO");
-                    return 1;
+                    flag = 1;
                 } else if (inicio>=cont && inicio<=aux){
                     printf("ERROR, CHOQUE DE HORARIO");
-                    return 1;
+                    flag = 1;
                 } else if (final>=cont && final<=aux){
                     printf("ERROR, CHOQUE DE HORARIO");
-                    return 1;
+                    flag = 1;
                 }
             }
+        }else{
+            flag = 0;
         }
     }
 
-    return 0;
+    if(flag ==1){
+        return 1;
+    } else{
+        return 0;
+    }
 }
 
 int main()
