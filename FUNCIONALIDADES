@@ -244,3 +244,15 @@ void consultarReserva(char estudiante[50])
     }
     fclose(fich);
 }
+
+int main()
+{
+    //agregarEstudiante();
+    //agregarSala();
+    //consultarSala("SAL001\n");
+    //crearReserva();
+    //calificarSala("SAL001\n");
+    //consultarReserva("Daniel Brenes\n");
+    return 0;
+}
+
