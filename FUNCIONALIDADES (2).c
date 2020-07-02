@@ -321,9 +321,15 @@ int atenderReserva(char id[TAMANO], char ubicacion[TAMANO], char fechas[TAMANO],
 }
 
 
-void modificarSala(char idSala[TAMANO],char ubicacion[TAMANO]){
-    char linea[1024], recursos[TAMANO], estado[TAMANO];
+void modificarSala(){
+    char linea[1024], recursos[TAMANO], estado[TAMANO], idSala[TAMANO], ubicacion[TAMANO];
     FILE *Archivo, *arch;
+    printf("Indique la sala que desea modificar: ");
+    scanf("%s",&idSala);
+    printf("[1]Biblioteca Figueres Ferrer\n[2]Learning Commons\nIndique la ubicacion de la sala: ");
+    scanf("%s",&ubicacion);
+    strcat(idSala,"\n");
+    strcat(ubicacion,"\n");
     Archivo = fopen("Registro.dat", "r");
     arch = fopen("ModificacionesSala.dat", "w");
     printf("Indique los recursos actualizados de la sala: ");
