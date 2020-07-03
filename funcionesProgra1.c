@@ -59,7 +59,7 @@ int verificarCarnet(Lista *L, int elemento);
 void agregarSala();
 void mostrarSalas();
 void calificarSala();
-void consultarSala(char sala[TAMANO]);
+void consultarSala();
 void crearReserva();
 void consultarReserva(char estudiante[50]);
 int atenderReserva(char id[TAMANO],char ubicacio[TAMANO],char fechas[TAMANO], int incio,int final);
@@ -233,8 +233,11 @@ void pasarArchivosCalificaciones(){
     }
 }
 
-void consultarSala(char sala[TAMANO]){
-    char registro[1024],reserva[1024],calif[1024];
+void consultarSala(){
+    char registro[1024],reserva[1024],calif[1024], sala[TAMANO];
+    printf("Indique la sala que vaya a consultar: ");
+    scanf("%s",&sala);
+    strcat(sala,"\n");
     FILE *fich;
     fich = fopen("Registro.dat", "r");
     FILE *arch;
@@ -504,14 +507,14 @@ int main()
 {
     //agregarEstudiante();
     //agregarSala();
-    //consultarSala("SAL001\n");
+    consultarSala();
     //crearReserva();
-    calificarSala();
+    //calificarSala();
     //consultarReserva("2019061571\n");
     //modificarSala();
     //pasarArchivosSala();
     //cancelarReserva();
     //pasarArchivosReserva();
-    pasarArchivosCalificaciones();
+    //pasarArchivosCalificaciones();
     return 0;
 }
