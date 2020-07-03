@@ -58,12 +58,14 @@ void agregarEstudiante();
 int verificarCarnet(Lista *L, int elemento);
 void agregarSala();
 void mostrarSalas();
-void calificarSala(char id[30]);
+void calificarSala();
 void consultarSala(char sala[TAMANO]);
 void crearReserva();
 void consultarReserva(char estudiante[50]);
 int atenderReserva(char id[TAMANO],char ubicacio[TAMANO],char fechas[TAMANO], int incio,int final);
-void pasarArchivos();
+void pasarArchivosSala();
+void pasarArchivosCalificaciones();
+void pasarArchivosReserva();
 
 
 void agregarEstudiante()
@@ -122,8 +124,9 @@ int verificarCarnet(Lista *L, int elemento)
 
 void agregarSala()
 {
-    FILE *Archivo;
+    FILE *Archivo, *arch;
     Archivo = fopen("Registro.dat","ab");
+    arch = fopen("Calificaciones.dat","ab");
 
     printf("\nIndique el ID de la sala: ");
     scanf("%s",&sala.id);
@@ -145,7 +148,13 @@ void agregarSala()
     printf("\nIndique la capacidad de la sala: ");
     scanf("%d",&sala.capacidad);
     fprintf(Archivo,"%d\n",sala.capacidad);
-    calificarSala(sala.id);
+    fprintf(arch,"%s\n",sala.id);
+    fprintf(arch,"%s\n",sala.ubicacion);
+    fprintf(arch,"%d\n",100);
+
+    fclose(Archivo);
+    fclose(arch);
+
 }
 
 void mostrarSalas(){
@@ -157,15 +166,64 @@ void mostrarSalas(){
     }
 }
 
-void calificarSala(char id[30]){
-    FILE *Archivo;
-    Archivo = fopen("Calificaciones.dat","ab");
-    printf("Indique la calificacion de la sala: ");
-    scanf("%d",&sala.calificacion);
+void calificarSala(){
+    char sala[TAMANO], linea[1024], ubicacion[TAMANO], calificacion[TAMANO];
+    FILE *Archivo, *aux;
+    Archivo = fopen("Calificaciones.dat","r");
+    aux = fopen("auxiliar.dat","w");
+    printf("\nIndique el ID de la sala: ");
+    scanf("%s",&sala);
+    printf("\n[1]Biblioteca Figueres Ferrer\n[2]Learning Commons\nIndique la ubicacion de la sala: ");
+    scanf("%s",&ubicacion);
+    printf("\nIndique la calificacion de la sala: ");
+    scanf("%s",&calificacion);
+    while(fgets(linea, 1024, (FILE*) Archivo)){
+        if(strcmp(linea,sala)==0){
+            fprintf(aux,"%s",linea);
+            fgets(linea, 1024, (FILE*) Archivo);
+            if(strcmp(linea,ubicacion)==0){
+                fprintf(aux,"%s",linea);
+                fgets(linea, 1024, (FILE*) Archivo);
+                fprintf(aux,"%s\n",calificacion);
+            }
+        }
+        fprintf(aux,"%s",linea);
+    }
+    fclose(Archivo);
+    fclose(aux);
+}
 
-    fprintf(Archivo,"%s\n",id);
-    fprintf(Archivo,"%d\n",sala.calificacion);
+void actuallizarCalificaciones(char id[TAMANO],char ubicacion[TAMANO]){
+    char linea[1024];
+    int num;
+    FILE *arch, *fich,*aux;
+    arch = fopen("Calificaciones.dat","r");
+    aux = fopen("auxiliar.dat","w");
+    while(fgets(linea, 1024, (FILE*) arch)){
+        if (strcmp(linea,id)==0){
+            fprintf(aux,"%s",linea);
+            fgets(linea, 1024, (FILE*) arch);
+            if(strcmp(linea,ubicacion)==0){
+                fprintf(aux,"%s",linea);
+                fgets(linea, 1024, (FILE*) arch);//calificacion
+                num = atoi(linea);
+                fprintf(aux,"%d\n",num-1);
+            }
+        }
+        fprintf(aux,"%s",linea);
+    }
+    fclose(arch);
+    fclose(aux);
+}
 
+void pasarArchivosCalificaciones(){
+    FILE *Archivo, *fich;
+    char linea[1024];
+    Archivo = fopen("auxiliar.dat", "r");
+    fich = fopen("Calificaciones.dat", "w");
+    while(fgets(linea, 1024, (FILE*) Archivo)){
+        fprintf(fich,"%s",linea);
+    }
 }
 
 void consultarSala(char sala[TAMANO]){
@@ -355,7 +413,7 @@ void modificarSala(){
     fclose(arch);
 }
 
-void pasarArchivos(){
+void pasarArchivosSala(){
     FILE *Archivo, *fich;
     char linea[1024];
     Archivo = fopen("ModificacionesSala.dat", "r");
@@ -365,16 +423,88 @@ void pasarArchivos(){
     }
 }
 
+void cancelarReserva(){
+    char carnet[TAMANO],idSala[TAMANO], ubicacion[TAMANO], fecha[TAMANO], linea[1024],estado[]="RESERVA CANCELADA\n";
+    int inicio, final;
+    printf("\nIndique el carnet del estudiante: ");
+    scanf("%s",&carnet);
+    strcat(carnet,"\n");
+    printf("\n el ID de la sala: ");
+    scanf("%s",&idSala);
+    strcat(idSala,"\n");
+    printf("\n[1]Biblioteca Figueres Ferrer\n[2]Learning Commons\nIndique la ubicacion de la sala: ");
+    scanf("%s",&ubicacion);
+    strcat(ubicacion,"\n");
+    printf("\nIndique la fecha de la reserva: ");
+    scanf("%s",&fecha);
+    strcat(fecha,"\n");
+    printf("\nIndique la hora de inicio de la reserva: ");
+    scanf("%d",&inicio);
+    printf("\nIndique la hora del final de la reserva: ");
+    scanf("%d",&final);
+    FILE *arch, *fich;
+    arch = fopen("Reserva.dat", "r");
+    fich = fopen("Cancelaciones.dat", "w");
+    while(fgets(linea, 1024, (FILE*) arch)){//carnet estudiante
+        if(strcmp(linea,carnet)==0){
+            fprintf(fich,"%s",linea);
+            fgets(linea, 1024, (FILE*) arch);//id sala
+            if(strcmp(linea,idSala)==0){//linea = id sala
+                fprintf(fich,"%s",linea);
+                fgets(linea, 1024, (FILE*) arch);//ubicacion
+                if(strcmp(linea,ubicacion)==0){
+                    fprintf(fich,"%s",linea);
+                    fgets(linea, 1024, (FILE*) arch);//fecha
+                    if(strcmp(linea,fecha)==0){
+                        fprintf(fich,"%s",linea);
+                        fgets(linea, 1024, (FILE*) arch);//hora inicio
+                        if(atoi(linea)==inicio){
+                            fprintf(fich,"%s",linea);
+                            fgets(linea, 1024, (FILE*) arch);//hora final
+                            if(atoi(linea)==final){
+                                fprintf(fich,"%s",linea);
+                                fgets(linea, 1024, (FILE*) arch);//prioridad
+                                fprintf(fich,"%s",linea);
+                                fprintf(fich,"%s",estado);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        fprintf(fich,"%s",linea);
+    }
+    fclose(arch);
+    fclose(fich);
+    actuallizarCalificaciones(strcat(idSala,"\n"),strcat(ubicacion,"\n"));
+}
+
+void pasarArchivosReserva(){
+    FILE *Archivo, *fich;
+    char linea[1024];
+    Archivo = fopen("Cancelaciones.dat", "r");
+    fich = fopen("Reserva.dat", "wb");
+    while(fgets(linea, 1024, (FILE*) Archivo)){
+        fprintf(fich,"%s",linea);
+    }
+    fclose(Archivo);
+    fclose(fich);
+}
+
 
 int main()
 {
     //agregarEstudiante();
-    //agregarSala();
+    agregarSala();
     //consultarSala("SAL001\n");
     //crearReserva();
-    //calificarSala("SAL001\n");
+    calificarSala();
     //consultarReserva("2019061571\n");
-    //modificarSala("SAL002\n","1\n");
-    pasarArchivos();
+    //modificarSala();
+    //pasarArchivosSala();
+    //cancelarReserva();
+    //pasarArchivosReserva();
+    pasarArchivosCalificaciones();
     return 0;
 }
+
