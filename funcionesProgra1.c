@@ -94,7 +94,7 @@ void agregarEstudiante()
         printf("DATOS GUARDADOS...");
     }else{
         int opcion;
-        printf("Parece que este carnet ya esta registrado. ¿Desea intentarlo de nuevo?\n\n[1] Intentar de nuevo\n[2] Ir al menu principal\n\n");
+        printf("Parece que este carnet ya esta registrado. Â¿Desea intentarlo de nuevo?\n\n[1] Intentar de nuevo\n[2] Ir al menu principal\n\n");
         scanf("%d", opcion);
         if(opcion == 1){
             return agregarEstudiante();
@@ -317,8 +317,11 @@ void crearReserva()
 
 }
 
-void consultarReserva(char carnet[50])
+void consultarReserva()
 {
+    prinft("Indique el carnet del estudiante: ");
+    scanf("%s",&carnet);
+    strcat(sala,"\n");
     char linea[1024];
     FILE *fich;
     fich = fopen("Reserva.dat", "r");
