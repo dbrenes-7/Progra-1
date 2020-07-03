@@ -319,9 +319,10 @@ void crearReserva()
 
 void consultarReserva()
 {
-    prinft("Indique el carnet del estudiante: ");
+    char carnet[TAMANO];
+    printf("Indique el carnet del estudiante: ");
     scanf("%s",&carnet);
-    strcat(sala,"\n");
+    strcat(carnet,"\n");
     char linea[1024];
     FILE *fich;
     fich = fopen("Reserva.dat", "r");
